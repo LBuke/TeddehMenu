@@ -11,7 +11,7 @@ initUtil() {
     level.GAMEMODE_TYPE = "ZOMBIES";
 
     level.PROJECT_NAME = "Teddeh";
-    level.PROJECT_VERSION = 0.1;
+    level.PROJECT_VERSION = 0.2;
     level.MENU_NAME = level.PROJECT_NAME + " " + level.PROJECT_VERSION;
 }
 
@@ -19,31 +19,113 @@ teddehLog(type, message) {
     str = "";
     switch(type) {
         case "ERROR":   str = "^1Error";   break;
-        case "WARNING": str = "^5Warning"; break;
+        case "WARNING": str = "^8Warning"; break;
         case "SUCCESS": str = "^2Success"; break;
+        case "INFO": str = "^2Info"; break;
     }
-    self iPrintln(str + "^3: ^7" + message);
+    self iPrintln(str + "^3: ^8" + message);
 }
 
-sendMessage(type, str, time, override) {
-    if(!override && self.message == 1) return;
-    alex = createfontstring( type, 1.9 );
-    alex.x = 0;
-    alex.y = 20.11;
-    alex settext(str);
-    alex.glowcolor = ( 0, 0, 1 );
-    alex.glowalpha = 1;
-    alex.alpha = 1;
-    alex settypewriterfx( 30, 999999999, 999999999 );
-    alex.archived = 0;
-    alexicon = self drawshader( "lui_loader_no_offset", 0, 80.11, 41, 41, ( 1, 1, 1 ), 0, 0 );
-    alexicon.archived = 0;
-    alexicon.alpha = 1;
+sendMessage(type, str, time) {
+    teddehMsg = createfontstring( type, 1.9 );
+    teddehMsg.x = 0;
+    teddehMsg.y = 20.11;
+    teddehMsg settext(str);
+    teddehMsg.glowcolor = ( 0, 0, 1 );
+    teddehMsg.glowalpha = 1;
+    teddehMsg.alpha = 1;
+    teddehMsg settypewriterfx( 30, 999999999, 999999999 );
+    teddehMsg.archived = 0;
+//    alexicon = self drawshader( "lui_loader_no_offset", 0, 80.11, 41, 41, ( 1, 1, 1 ), 0, 0 );
+//    alexicon.archived = 0;
+//    alexicon.alpha = 1;
     wait time;
-    alex destroy();
-    alexicon destroy();
+    teddehMsg destroy();
+//    alexicon destroy();
 }
 
 toggleMessage(str, status) {
-    self iprintln( "^5" + str + " : [" + (status ? "^2On" : "^1Off") + "^5]" );
+    self iprintln( "^3" + str + " ^8[" + (status ? "^2On" : "^1Off") + "^8]" );
 }
+
+createText(font, fontscale, align, relative, x, y, sort, color, alpha, glowColor, glowAlpha, text) {
+	textElem = CreateFontString( font, fontscale );
+	textElem setPoint( align, relative, x, y );
+	textElem.sort = sort;
+	textElem.type = "text";
+	textElem setText(text);
+	textElem.color = color;
+	textElem.alpha = alpha;
+	textElem.glowColor = glowColor;
+	textElem.glowAlpha = glowAlpha;
+	textElem.hideWhenInMenu = true;
+	return textElem;
+}
+
+createText(font, fontscale, x, y, sort, color, alpha, glowColor, glowAlpha, text) {
+	textElem = self createFontString(font, fontscale);
+	textElem.x = x;
+	textElem.y = y;
+	textElem.align = "CENTER";
+	textElem.sort = sort;
+	textElem.type = "text";
+	textElem setText(text);
+	textElem.color = color;
+	textElem.alpha = alpha;
+	textElem.glowColor = glowColor;
+	textElem.glowAlpha = glowAlpha;
+	textElem.hideWhenInMenu = true;
+	return textElem;
+}
+
+drawText(text, font, fontScale, x, y, color, alpha, glowColor, glowAlpha, sort) {
+    hud = self createFontString(font, fontScale);
+    hud setText(text);
+    hud setPoint("CENTER", "TOP", x, y);
+    hud.color = color;
+    hud.alpha = alpha;
+    hud.glowColor = glowColor;
+    hud.glowAlpha = glowAlpha;
+    hud.sort = sort;
+    return hud;
+}
+
+createRectangle(align, relative, x, y, width, height, color, alpha, sorting, shadero) {
+	barElemBG = newClientHudElem(self);
+	barElemBG.elemType = "bar";
+	if (!level.splitScreen) {
+		barElemBG.x = -2;
+		barElemBG.y = -2;
+	}
+	
+	barElemBG.width = width;
+	barElemBG.height = height;
+	barElemBG.align = align;
+	barElemBG.relative = relative;
+	barElemBG.xOffset = 0;
+	barElemBG.yOffset = 0;
+	barElemBG.children = [];
+	barElemBG.color = color;
+	if(isDefined(alpha)) barElemBG.alpha = alpha;
+	else barElemBG.alpha = 1;
+	barElemBG setShader( shadero, width , height );
+	barElemBG.hidden = false;
+	barElemBG.sort = sorting;
+	barElemBG setPoint(align,relative,x,y);
+	return barElemBG;
+}
+
+//drawShader(shader, x, y, width, height, color, alpha, sort) {
+//    hud = newClientHudElem(self);
+//    hud.elemtype = "icon";
+//    hud.color = color;
+//    hud.alpha = alpha;
+//    hud.sort = sort;
+//    hud.children = [];
+//    hud setParent(level.uiParent);
+//    hud setShader(shader, width, height);
+//    hud setPoint("CENTER", "TOP", x, y);
+//    return hud;
+//}
+
+

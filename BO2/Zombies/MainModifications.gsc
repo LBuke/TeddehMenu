@@ -119,26 +119,46 @@ toggleNoClip() {
 /* ONSCREEN DISPLAY */
 doHeart() {
     if(!isDefined(level.SA)) {
-        level.iamtext = self.name;
         level.SA=level createServerFontString("hudbig",2.1);
-        level.SA setPoint( "TOPLEFT","TOPLEFT",0,30 + 100 );
-        level.SA setText( "^1" + level.PROJECT_NAME + " ^3[^1v" + level.PROJECT_VERSION + "^3]" );
+        level.SA setPoint("TOPLEFT","TOPLEFT",0,30 + 100);
+        level.SA setText("^1" + level.PROJECT_NAME + " Project");
         level.SA.archived=false;
         level.SA.hideWhenInMenu=true;
+        
+        level.SA2=level createServerFontString("hudbig",1.6);
+        level.SA2 setPoint("TOPLEFT","TOPLEFT",0,30 + 125);
+        level.SA2 setText(" ^8Version " + level.PROJECT_VERSION);
+        level.SA2.archived=false;
+        level.SA2.hideWhenInMenu=true;
+        
         for(;;) {
-            level.SA ChangeFontScaleOverTime( 0.4 );
+            level.SA ChangeFontScaleOverTime(0.4);
             level.SA.fontScale = 2.0;
-            level.SA FadeOverTime( 0.3 );
+            level.SA FadeOverTime(0.3);
             level.SA.glowAlpha=1;
             level.SA.glowColor =((randomint(255)/255),(randomint(255)/255),(randomint(255)/255));
             level.SA SetPulseFX(40,2000,600);
+            
+            level.SA2 ChangeFontScaleOverTime(0.4);
+            level.SA2.fontScale = 1.6;
+            level.SA2 FadeOverTime(0.3);
+            level.SA2.glowAlpha=1;
+            level.SA2.glowColor =((randomint(255)/255),(randomint(255)/255),(randomint(255)/255));
+            level.SA2 SetPulseFX(40,2000,600);
             wait 0.4;
-            level.SA ChangeFontScaleOverTime( 0.4 );
+            level.SA ChangeFontScaleOverTime(0.4);
             level.SA.fontScale = 2.3;
-            level.SA FadeOverTime( 0.3 );
+            level.SA FadeOverTime(0.3);
             level.SA.glowAlpha=1;
             level.SA.glowColor =((randomint(255)/255),(randomint(255)/255),(randomint(255)/255));
             level.SA SetPulseFX(40,2000,600);
+            
+            level.SA2 ChangeFontScaleOverTime(0.4);
+            level.SA2.fontScale = 1.9;
+            level.SA2 FadeOverTime(0.3);
+            level.SA2.glowAlpha=1;
+            level.SA2.glowColor =((randomint(255)/255),(randomint(255)/255),(randomint(255)/255));
+            level.SA2 SetPulseFX(40,2000,600);
             wait 0.4;
         }
     }
@@ -146,10 +166,12 @@ doHeart() {
         toggleMessage("Do Heart", true);
         level.doheart=1;
         level.SA.alpha=1;
+        level.SA2.alpha=1;
     }
     else if(level.doheart==1) {
         toggleMessage("Do Heart", false);
         level.SA.alpha=0;
+        level.SA2.alpha=0;
         level.doheart=0;
     }
 }
@@ -190,3 +212,5 @@ turnPowerOn(user) {
 pOn() {
     level thread maps/mp/zombies/_zm_audio::sndmusicstingerevent("poweron");
 }
+
+
