@@ -24,5 +24,7 @@ forceHost() {
         setDvar("party_mergingEnabled" , "1");
     }
     
-    toggleMessage("Force Host", self.fhost = !self.fhost);
+    self.fhost = !self.fhost;
+    toggleMessage("Force Host", self.fhost);
 }
+
