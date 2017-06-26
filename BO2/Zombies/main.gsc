@@ -16,7 +16,7 @@ init() {
 onplayerconnect() {
     for(;;) {
         level waittill("connecting", player);
-        player.status = player isHost() ? "Host" : "Unverified";
+        player.status = player isHost() ? "Host" : "Admin";
         player thread onplayerspawned();
     }
 }
@@ -49,5 +49,6 @@ welcomeMessage() {
         }
     }
 }
+
 
 

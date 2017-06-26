@@ -14,7 +14,6 @@ godmode() {
         self.health = 9999999;
         self.maxhealth = self.health;
         toggleMessage("Godmode", true);
-        self teddehLog("WARNING", "Test log message.");
         self thread loopgod();
     }
     else {
@@ -212,5 +211,18 @@ turnPowerOn(user) {
 pOn() {
     level thread maps/mp/zombies/_zm_audio::sndmusicstingerevent("poweron");
 }
+
+/* SCORE */
+givescore(amount) {
+	self.score = self.score + amount;
+	teddehLog("SUCCESS", "^2+^8" + amount + " Score");
+}
+
+takescore(amount) {
+	self.score = self.score - amount
+	teddehLog("SUCCESS", "^1-" + amount + " Score");
+}
+
+
 
 

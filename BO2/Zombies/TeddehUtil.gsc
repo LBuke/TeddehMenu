@@ -19,7 +19,7 @@ teddehLog(type, message) {
     str = "";
     switch(type) {
         case "ERROR":   str = "^1Error";   break;
-        case "WARNING": str = "^8Warning"; break;
+        case "WARNING": str = "^6Warning"; break;
         case "SUCCESS": str = "^2Success"; break;
         case "INFO": str = "^2Info"; break;
     }
@@ -90,6 +90,18 @@ drawText(text, font, fontScale, x, y, color, alpha, glowColor, glowAlpha, sort) 
     return hud;
 }
 
+drawText(align, relative, text, font, fontScale, x, y, color, alpha, glowColor, glowAlpha, sort) {
+    hud = self createFontString(font, fontScale);
+    hud setText(text);
+    hud setPoint(align, relative, x, y);
+    hud.color = color;
+    hud.alpha = alpha;
+    hud.glowColor = glowColor;
+    hud.glowAlpha = glowAlpha;
+    hud.sort = sort;
+    return hud;
+}
+
 createRectangle(align, relative, x, y, width, height, color, alpha, sorting, shadero) {
 	barElemBG = newClientHudElem(self);
 	barElemBG.elemType = "bar";
@@ -127,5 +139,6 @@ createRectangle(align, relative, x, y, width, height, color, alpha, sorting, sha
 //    hud setPoint("CENTER", "TOP", x, y);
 //    return hud;
 //}
+
 
 
