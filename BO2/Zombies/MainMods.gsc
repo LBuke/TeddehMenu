@@ -42,7 +42,7 @@ unlimitedAmmo() {
     self endon("disconnect");
     self endon("death");
 
-	self.unlimitedAmmo = !self.unlimitedAmmo
+	self.unlimitedAmmo = !self.unlimitedAmmo;
 	toggleMessage("Unlimited Ammo", self.unlimitedAmmo);
 	
     while(self.unlimitedAmmo) {
@@ -199,7 +199,7 @@ givescore(amount) {
 }
 
 takescore(amount) {
-	self.score = self.score - amount
+	self.score = self.score - amount;
 	teddehLog("SUCCESS", "^1-" + amount + " Score");
 }
 
