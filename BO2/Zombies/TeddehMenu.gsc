@@ -17,6 +17,9 @@ initTeddehMenu() {
 	self.visibleTeddehMenu[2] = 1;
 	
 	self setTeddehMenuData();
+	
+	self initMainModifications();
+	self initHostModifications();
 }
 
 openTeddehMenu() {
@@ -120,7 +123,7 @@ teddehControls() {
 setTeddehMenuData() {
 	self addTeddehMenuCategory(0, "Main Mods", "NONE", ((252/255), (152/255), (64/255)));//
 		self addTeddehMenuOption(0, 0, "Godmode", ::godmode(), "");
-		self addTeddehMenuOption(0, 1, "Unlimited Ammo", ::unlimited_ammo(), "");
+		self addTeddehMenuOption(0, 1, "Unlimited Ammo", ::unlimitedAmmo(), "");
 		self addTeddehMenuOption(0, 2, "Adv. No Clip", ::toggleNoClip(), "");
 		self addTeddehMenuOption(0, 3, "Advertisment", ::toggleTeddehMenuAdvertisment(), "");
 		self addTeddehMenuOption(0, 4, "Give Score", ::givescore(), 250000);
@@ -377,5 +380,7 @@ teddehMenuAdvertisment() {
 removeTeddehMenuAdvertisment() {
 	for(i = 0; i < 5; i++) self.hud.menuAd[i] destroy();
 }
+
+
 
 

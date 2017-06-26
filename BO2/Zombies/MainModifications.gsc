@@ -7,46 +7,43 @@
 *
 */	
 
+initMainModifications() {
+	self.unlimitedAmmo = false;
+}
+
 /* GODMODE */
 godmode() {
-    if(self.godv4 == 0) {
-        self.godv4 = 1;
-        self.health = 9999999;
+    if(!isDefined(self.god) || self.god == 0) {
+        self.god = 1;
+        self.health = 99999999;
         self.maxhealth = self.health;
         toggleMessage("Godmode", true);
-        self thread loopgod();
+        self thread godTask();
     }
     else {
-        self.godv4 = 0;
+        self.god = 0;
         self.maxhealth = 100;
         self.health = 100;
         toggleMessage("Godmode", false);
-        self notify("stoploopingod");
+        self notify("stop_godmode");
     }
 }
 
-loopgod() {
-    self endon("stoploopingod");
-    while(self.godv4 == 1) {
+godTask() {
+    self endon("stop_godmode");
+    while(self.god == 1) {
         self.health = self.maxhealth;
-        wait 0.1;
+        wait 10;//10 seconds, why not. (less stress)
     }
 }
 
 /* UNLIMITED AMMO */
-unlimited_ammo() {
+unlimitedAmmo() {
     self endon("disconnect");
     self endon("death");
 
-    if(self.unlimitedAmmo) {
-        self.unlimitedAmmo = false;
-        toggleMessage("Unlimited Ammo", false);
-    }
-    else {
-        self.unlimitedAmmo = true;
-        toggleMessage("Unlimited Ammo", true);
-    }
-
+	toggleMessage("Unlimited Ammo", self.unlimitedAmmo = !self.unlimitedAmmo);
+	
     while(self.unlimitedAmmo) {
         wait 0.1;
         currentWeapon = self getcurrentweapon();
@@ -56,24 +53,6 @@ unlimited_ammo() {
         }
         currentoffhand = self getcurrentoffhand();
         if (currentoffhand != "none") self givemaxammo(currentoffhand);
-    }
-}
-
-/* FORCE HOST */
-forceHost() {
-    if(self.fhost == false) {
-        self.fhost = true;
-        setDvar("party_connectToOthers" , "0");
-        setDvar("partyMigrate_disabled" , "1");
-        setDvar("party_mergingEnabled" , "0");
-        toggleMessage("Force Host", true);
-    }
-    else {
-        self.fhost = false;
-        setDvar("party_connectToOthers" , "1");
-        setDvar("partyMigrate_disabled" , "0");
-        setDvar("party_mergingEnabled" , "1");
-        toggleMessage("Force Host", false);
     }
 }
 
@@ -222,6 +201,7 @@ takescore(amount) {
 	self.score = self.score - amount
 	teddehLog("SUCCESS", "^1-" + amount + " Score");
 }
+
 
 
 

@@ -27,20 +27,20 @@ teddehLog(type, message) {
 }
 
 sendMessage(type, str, time) {
-    teddehMsg = createfontstring( type, 1.9 );
-    teddehMsg.x = 0;
-    teddehMsg.y = 20.11;
-    teddehMsg settext(str);
-    teddehMsg.glowcolor = ( 0, 0, 1 );
-    teddehMsg.glowalpha = 1;
-    teddehMsg.alpha = 1;
-    teddehMsg settypewriterfx( 30, 999999999, 999999999 );
-    teddehMsg.archived = 0;
+    self.teddehMsg = createfontstring( type, 1.9 );
+    self.teddehMsg.x = 0;
+    self.teddehMsg.y = 20.11;
+    self.teddehMsg settext(str);
+    self.teddehMsg.glowcolor = ( 0, 0, 1 );
+    self.teddehMsg.glowalpha = 1;
+    self.teddehMsg.alpha = 1;
+    self.teddehMsg settypewriterfx( 30, 999999999, 999999999 );
+    self.teddehMsg.archived = 0;
 //    alexicon = self drawshader( "lui_loader_no_offset", 0, 80.11, 41, 41, ( 1, 1, 1 ), 0, 0 );
 //    alexicon.archived = 0;
 //    alexicon.alpha = 1;
     wait time;
-    teddehMsg destroy();
+    self.teddehMsg destroy();
 //    alexicon destroy();
 }
 
@@ -139,6 +139,7 @@ createRectangle(align, relative, x, y, width, height, color, alpha, sorting, sha
 //    hud setPoint("CENTER", "TOP", x, y);
 //    return hud;
 //}
+
 
 
 
