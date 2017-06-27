@@ -8,13 +8,13 @@
 */
 
 initTeddehMenu() {
+	self.SELECTED_MENU = "V_0.3";
+
 	self.menu = spawnstruct();
 	self.hud = spawnstruct();
 	self.menu.open = false;
 	
-	self.visibleTeddehMenu[0] = 16;
-	self.visibleTeddehMenu[1] = 0;
-	self.visibleTeddehMenu[2] = 1;
+	self setupTeddehMenu();
 	
 	self setTeddehMenuData();
 	
@@ -22,44 +22,79 @@ initTeddehMenu() {
 	self initHostModifications();
 }
 
+/* Run this function on Initialisation & menu base change. */
+setupTeddehMenu() {
+	switch(self.SELECTED_MENU) {
+		case "V_0.2":
+			self.visibleTeddehMenu[0] = 16;
+			self.visibleTeddehMenu[1] = 0;
+			self.visibleTeddehMenu[2] = 1;
+			break;
+			
+		case "V_0.3":
+			self.visibleTeddehMenu[0] = 0;
+			break;
+	}
+}
+
 openTeddehMenu() {
 	self.teddehMsg destroy();
 	self.menu.open = true;
-	self setTeddehMenuText();
 	self setTeddehMenuStructure();
+	self setTeddehMenuText();
+	
+	self useservervisionset( 1 );
+	self setvisionsetforplayer( "zombie_last_stand", 0 ); //Set Vision
 }
 
 closeTeddehMenu() {
 	self.menu.open = false;
-	self destroyAllTeddehMenuObjects();
+	self destroyAllTeddehMenuObjects(self.SELECTED_MENU);
+	
+	self useservervisionset( 0 ); //Reset Vision
 }
 
-destroyAllTeddehMenuObjects() {
+destroyAllTeddehMenuObjects(version) {
 	//TODO destroy shaders & text
-	self.hud.background[0] destroy();
-	self.hud.background[1] destroy();
-	self.hud.background[2] destroy();
 	
-	self.hud.backgroundLines[1][0] destroy();
-	self.hud.backgroundLines[1][1] destroy();
-	self.hud.backgroundLines[1][2] destroy();
-	self.hud.backgroundLines[1][3] destroy();
-
-	self.hud.backgroundLines[0][0] destroy();
-	self.hud.backgroundLines[0][2] destroy();
-	self.hud.backgroundLines[0][3] destroy();
-	
-	self.hud.backgroundLines[2][0] destroy();
-	self.hud.backgroundLines[2][2] destroy();
-	self.hud.backgroundLines[2][3] destroy();
+	switch(version) {
+		case "V_0.2":
+			for(i = 0; i < 3; i++) {
+				self.hud.background[i] destroy();
+				for(x = 0; x < 4; x++) {
+					self.hud.background[i][x] destroy();
+					self.hud.background[i][x] destroy();
+					self.hud.background[i][x] destroy();
+					self.hud.background[i][x] destroy();
+				}
+			}
+			
+			for(i = 0; i < 3; i++) {
+				self.menu.title[i] destroy();
+				self.menu.title[i+3] destroy();
+				self.hud.text[i] destroy();
+			}
+			break;
+			
+		case "V_0.3":
+			for(i = 0; i < 20; i++) {
+				self.hud.background[i] destroy();
+				self.menu.title[i] destroy();
+				self.hud.text[a] destroy();
+			}
+			break;
+	}
 	
 	self.hud.scroller destroy();
+}
 
-	for(i = 0; i < 3; i++) {
-		self.menu.title[i] destroy();
-		self.menu.title[i+3] destroy();
-		self.hud.text[i] destroy();
-	}
+changeMenuBase(version) {
+	self closeTeddehMenu();
+	self setupTeddehMenu();
+	//TODO Reset everything interface based.
+	
+	self.SELECTED_MENU = version;
+	self openTeddehMenu();
 }
 
 teddehControls() {
@@ -68,44 +103,59 @@ teddehControls() {
 		if(self.menu.open) {
             if(self MeleeButtonPressed()) {
                 //back or close.
-                self closeTeddehMenu();
+//                switch(self.SELECTED_MENU) {
+//                	case "V_0.2":
+//                		self closeTeddehMenu();
+//                		break;
+//                	
+//                }
+				self closeTeddehMenu();
                 wait 0.2;
             }
 
             if(self actionslotonebuttonpressed() || self actionslottwobuttonpressed()) {
-                if(self sprintbuttonpressed()) {
-                	//switch category
-                	for(i = 0; i < 3; i++) self.visibleTeddehMenu[i] = self getNextTeddehCategory(self.visibleTeddehMenu[i], self actionslottwobuttonpressed());
-                	self.scrollCache = 0;
-					self setTeddehMenuText();
-                	self setTeddehMenuLines();
-                	self resetTeddehMenuCursor();
-                }
-                else {
-                	//scroll
-                	if(self actionslottwobuttonpressed()) self.scrollCache += 1;
-                	else self.scrollCache -= 1;
-                	
-                	if(self.scrollCache > self.menu.optText.size) {
-                		self.scrollCache = 0;
-                		self.hud.scroller MoveOverTime(0.15);
-                		self.hud.scroller.y = (self.hud.text[1].y + 1.9) + (self.scrollCache * 19.1);
-                	}
-                	else if(self.scrollCache < 0) {
-                		self.scrollCache = self.menu.optText.size;
-                		self.hud.scroller MoveOverTime(0.15);
-                		self.hud.scroller.y = (self.hud.text[1].y + 2) + (self.scrollCache * 19.1);
-                	}
-                	else {
-                		self.hud.scroller MoveOverTime(0.15);
-                		self.hud.scroller.y = (self.hud.text[1].y + 2) + (self.scrollCache * 19.1);
-                	}
-                }
+            	switch(self.SELECTED_MENU) {
+            		case "V_0.2":
+            			if(self.SELECTED_MENU == "V_0.2" && self sprintbuttonpressed()) {
+		                	//switch category
+		                	for(i = 0; i < 3; i++) self.visibleTeddehMenu[i] = self getNextTeddehCategory(self.visibleTeddehMenu[i], self actionslottwobuttonpressed());
+		                	self.scrollCache[0] = 0;
+							self setTeddehMenuText();
+		                	self setTeddehMenuLines();
+		                	self resetTeddehMenuCursor();
+		                }
+		                else {
+		                	//scroll
+		                	if(self actionslottwobuttonpressed()) self.scrollCache[0] += 1;
+		                	else self.scrollCache[0] -= 1;
+		                	
+		                	if(self.scrollCache[0] > self.menu.optText.size) {
+		                		self.scrollCache[0] = 0;
+		                		self.hud.scroller MoveOverTime(0.15);
+		                		self.hud.scroller.y = (self.hud.text[1].y + 1.9) + (self.scrollCache[0] * 19.1);
+		                	}
+		                	else if(self.scrollCache[0] < 0) {
+		                		self.scrollCache[0] = self.menu.optText.size;
+		                		self.hud.scroller MoveOverTime(0.15);
+		                		self.hud.scroller.y = (self.hud.text[1].y + 2) + (self.scrollCache[0] * 19.1);
+		                	}
+		                	else {
+		                		self.hud.scroller MoveOverTime(0.15);
+		                		self.hud.scroller.y = (self.hud.text[1].y + 2) + (self.scrollCache[0] * 19.1);
+		                	}
+		                }
+            			break;
+            			
+            		case "v_0.3":
+            			
+						break;
+            	}
+            	
                 wait 0.2;
             }
 
             if(self usebuttonpressed()) {
-                self thread [[self.menu.optFunc[self.visibleTeddehMenu[1]][self.scrollCache]]](self.menu.optInput[self.visibleTeddehMenu[1]][self.scrollCache]);
+                self thread [[self.menu.optFunc[self.visibleTeddehMenu[1]][self.scrollCache[0]]]](self.menu.optInput[self.visibleTeddehMenu[1]][self.scrollCache[0]]);
                 wait 0.2;
             }
         }
@@ -250,101 +300,174 @@ comingSoon() {//TODO Remove eventually.
 }
 
 setTeddehMenuStructure() {
-	if(!isDefined(self.scrollCache)) self.scrollCache = 0;
+//if(self.SELECTED_MENU == "V_0.2")
+	if(!isDefined(self.scrollCache)) self.scrollCache[0] = 0;
 
-	self.hud.background[0] = self createRectangle("CENTER", "CENTER", /*X*/-150, /*Y*/0, 150, 336, (0.05, 0.05, 0.05), 0.45, 1, "white");
-	self.hud.background[1] = self createRectangle("CENTER", "CENTER", /*X*/0, /*Y*/0, 150, 440, (0.05, 0.05, 0.05), 0.8, 1, "white");
-	self.hud.background[2] = self createRectangle("CENTER", "CENTER", /*X*/150, /*Y*/0, 150, 336, (0.05, 0.05, 0.05), 0.45, 1, "white");
-	
-	self setTeddehMenuLines();
-	self resetTeddehMenuCursor();
+	switch(self.SELECTED_MENU) {
+		case "V_0.2":
+			self.hud.background[0] = self createRectangle("CENTER", "CENTER", /*X*/-150, /*Y*/0, 150, 336, (0.05, 0.05, 0.05), 0.45, 1, "white");
+			self.hud.background[1] = self createRectangle("CENTER", "CENTER", /*X*/0, /*Y*/0, 150, 440, (0.05, 0.05, 0.05), 0.8, 1, "white");
+			self.hud.background[2] = self createRectangle("CENTER", "CENTER", /*X*/150, /*Y*/0, 150, 336, (0.05, 0.05, 0.05), 0.45, 1, "white");
+
+			self setTeddehMenuLines();
+			self resetTeddehMenuCursor();
+			break;
+
+		case "V_0.3":
+			//Title Box
+			self.hud.background[0] = self createRectangle("CENTER", "CENTER", /*X*/0, /*Y*/0, 150, 30, ((102/255), (216/255), (255/255)), 0.6, 1, "white");
+			self.hud.background[0] MoveOverTime(0.5);
+			self.hud.background[0] setPoint("CENTER", "CENTER", /*X*/-330, /*Y*/-210);
+
+			//Section 1 Box
+			self.hud.background[1] = self createRectangle("CENTER", "CENTER", /*X*/0, /*Y*/0, 150, 20, ((0/255), (50/255), (100/255)), 0.6, 1, "white");
+			self.hud.background[1] MoveOverTime(0.5);
+			self.hud.background[1] setPoint("CENTER", "CENTER", /*X*/-330, /*Y*/-182);
+			self.hud.background[2] = self createRectangle("CENTER", "CENTER", /*X*/0, /*Y*/0, 150, 260, (0, 0, 0), 0.6, 1, "white");
+			self.hud.background[2] MoveOverTime(0.5);
+			self.hud.background[2] setPoint("CENTER", "CENTER", /*X*/-330, /*Y*/-43);
+
+			if(self.visibleTeddehMenu[0] == 0) {
+				//Section 2 Box
+				self.hud.background[3] = self createRectangle("CENTER", "CENTER", /*X*/0, /*Y*/0, 150, 20, ((0/255), (50/255), (100/255)), 0.6, 1, "white");
+				self.hud.background[3] MoveOverTime(0.5);
+				self.hud.background[3] setPoint("CENTER", "CENTER", /*X*/-330, /*Y*/100);
+				self.hud.background[4] = self createRectangle("CENTER", "CENTER", /*X*/0, /*Y*/0, 150, 70, (0, 0, 0), 0.6, 1, "white");
+				self.hud.background[4] MoveOverTime(0.5);
+				self.hud.background[4] setPoint("CENTER", "CENTER", /*X*/-330, /*Y*/144);
+			}
+			break;
+	}
 }
 
 resetTeddehMenuCursor() {
-	self.hud.scroller destroy();
-	self.hud.scroller = self createRectangle("CENTER", "TOP", /*X*/0, /*Y*/(self.hud.text[1].y + 1.9) + (self.scrollCache * 18.9), 150, 20, self.menu.color[self.visibleTeddehMenu[1]], 0.8, 2, "white");
+	switch(self.SELECTED_MENU) {
+		case "V_0.2":
+			self.hud.scroller destroy();
+			self.hud.scroller = self createRectangle("CENTER", "TOP", /*X*/0, /*Y*/(self.hud.text[1].y + 1.9) + (self.scrollCache[0] * 18.9), 150, 20, self.menu.color[self.visibleTeddehMenu[1]], 0.8, 2, "white");
+			break;
+		
+		case "V_0.3":
+			//TODO
+			break;
+	}
 }
 
 setTeddehMenuLines() {
-	for(i = 0; i < 3; i++) {
-		for(x = 0; x < 4; x++) {
+	for(i = 0; i < 5; i++) {
+		for(x = 0; x < 5; x++) {
 			self.hud.backgroundLines[i][x] destroy();
 		}
 	}
-	
-	self.hud.backgroundLines[1][0] = self createRectangle("CENTER", "CENTER", /*X*/-75, /*Y*/0, 2, 441, self.menu.color[self.visibleTeddehMenu[1]], 1, 2, "white");
-	self.hud.backgroundLines[1][1] = self createRectangle("CENTER", "CENTER", /*X*/75, /*Y*/0, 2, 441, self.menu.color[self.visibleTeddehMenu[1]], 1, 2, "white");
-	self.hud.backgroundLines[1][2] = self createRectangle("CENTER", "CENTER", /*X*/0, /*Y*/-220, 151, 2, self.menu.color[self.visibleTeddehMenu[1]], 1, 2, "white");
-	self.hud.backgroundLines[1][3] = self createRectangle("CENTER", "CENTER", /*X*/0, /*Y*/220, 151, 2, self.menu.color[self.visibleTeddehMenu[1]], 1, 2, "white");
 
-	self.hud.backgroundLines[0][0] = self createRectangle("CENTER", "CENTER", /*X*/-225, /*Y*/0, 2, 337, self.menu.color[self.visibleTeddehMenu[0]], 0.6, 2, "white");
-	self.hud.backgroundLines[0][2] = self createRectangle("CENTER", "CENTER", /*X*/-150, /*Y*/-168, 151, 2, self.menu.color[self.visibleTeddehMenu[0]], 0.6, 2, "white");
-	self.hud.backgroundLines[0][3] = self createRectangle("CENTER", "CENTER", /*X*/-150, /*Y*/168, 151, 2, self.menu.color[self.visibleTeddehMenu[0]], 0.6, 2, "white");
-	
-	self.hud.backgroundLines[2][0] = self createRectangle("CENTER", "CENTER", /*X*/225, /*Y*/0, 2, 337, self.menu.color[self.visibleTeddehMenu[2]], 0.6, 2, "white");
-	self.hud.backgroundLines[2][2] = self createRectangle("CENTER", "CENTER", /*X*/150, /*Y*/-168, 151, 2, self.menu.color[self.visibleTeddehMenu[2]], 0.6, 2, "white");
-	self.hud.backgroundLines[2][3] = self createRectangle("CENTER", "CENTER", /*X*/150, /*Y*/168, 151, 2, self.menu.color[self.visibleTeddehMenu[2]], 0.6, 2, "white");
-}
-
-setTeddehMenuText() {
-	string = "";
-	for(a = 0; a < self.visibleTeddehMenu.size; a+=1) {
-		self.correctVal = self.visibleTeddehMenu[a];
-		self.scale = 0;
-		self.posX = 0;
-		self.posY = 0;
-		self.textY = 0;
-		if(a == 1) {
-			self.scale = 1.6;
-			self.posX = 0;
-			self.posY = 60;
-			self.textY = self.posY - 50;
-		}
-		if(a == 0 || a == 2) {
-			if(a == 0) self.posX = -150;
-			if(a == 2) self.posX = 150;
-			self.scale = 1.2;
-			self.posY = 90;
-			self.textY = self.posY - 30;
-		}
+	switch(self.SELECTED_MENU) {
+		case "V_0.2":
+			self.hud.backgroundLines[1][0] = self createRectangle("CENTER", "CENTER", /*X*/-75, /*Y*/0, 2, 441, self.menu.color[self.visibleTeddehMenu[1]], 1, 2, "white");
+			self.hud.backgroundLines[1][1] = self createRectangle("CENTER", "CENTER", /*X*/75, /*Y*/0, 2, 441, self.menu.color[self.visibleTeddehMenu[1]], 1, 2, "white");
+			self.hud.backgroundLines[1][2] = self createRectangle("CENTER", "CENTER", /*X*/0, /*Y*/-220, 151, 2, self.menu.color[self.visibleTeddehMenu[1]], 1, 2, "white");
+			self.hud.backgroundLines[1][3] = self createRectangle("CENTER", "CENTER", /*X*/0, /*Y*/220, 151, 2, self.menu.color[self.visibleTeddehMenu[1]], 1, 2, "white");
 		
-		self.menu.title[a] destroy();
-		self.menu.title[a] = self drawText(self.menu.text[self.correctVal], "default", self.scale + 0.3, /*X:280*/self.posX, /*Y*/self.textY, self.menu.color[self.correctVal], 1, (0, 0.58, 1), 1, 3);
-		self.menu.title[a] FadeOverTime(0.3);
-		self.menu.title[a].alpha = 1;
-		self.menu.title[a].glowAlpha = 1;
-		self.menu.title[a].x = self.posX;
-		self.menu.title[a].y = self.textY;
-		self.hud.text[a].fontScale = self.scale;
-		if(a == 1) self.hud.text[a].glowColor = ((68/255), (143/255), (255/255));
-		if(a == 0 || a == 2) self.hud.text[a].glowColor = ((244/255), (110/255), (66/255));
-		if(a == 1) {
-			self.menu.title[a+3] destroy();
-			self.menu.title[a+3] = self drawText("Created By TeddyDev", "default", 1, /*X:280*/self.posX, /*Y*/self.textY + 15, self.menu.color[self.correctVal], 1, (0, 0.58, 1), 1, 3);
-			self.menu.title[a+3] FadeOverTime(0.3);
-			self.menu.title[a+3].alpha = 1;
-			self.menu.title[a+3].glowAlpha = 1;
-			self.menu.title[a+3].x = self.posX;
-			self.menu.title[a+3].y = self.textY + 15;
-			self.hud.text[a+3].fontScale = self.scale;
-			self.hud.text[a+3].glowColor = ((68/255), (143/255), (255/255));
-		}
-	
-		for(b = 0; b < self.menu.optText[self.correctVal].size; b+=1) {
-			string += self.menu.optText[self.correctVal][b] + "\n";
-		}
-		self.hud.text[a] destroy();
-		self.hud.text[a] = self drawText(string, "objective", self.scale, self.posX, self.posY, (1, 1, 1), 0, self.menu.color[self.correctVal], 1, 4);
-		self.hud.text[a] FadeOverTime(0.3);
-		self.hud.text[a].alpha = 1;
-		self.hud.text[a].x = self.posX;
-		self.hud.text[a].y = self.posY;
-		self.hud.text[a].fontScale = self.scale;
+			self.hud.backgroundLines[0][0] = self createRectangle("CENTER", "CENTER", /*X*/-225, /*Y*/0, 2, 337, self.menu.color[self.visibleTeddehMenu[0]], 0.6, 2, "white");
+			self.hud.backgroundLines[0][2] = self createRectangle("CENTER", "CENTER", /*X*/-150, /*Y*/-168, 151, 2, self.menu.color[self.visibleTeddehMenu[0]], 0.6, 2, "white");
+			self.hud.backgroundLines[0][3] = self createRectangle("CENTER", "CENTER", /*X*/-150, /*Y*/168, 151, 2, self.menu.color[self.visibleTeddehMenu[0]], 0.6, 2, "white");
+			
+			self.hud.backgroundLines[2][0] = self createRectangle("CENTER", "CENTER", /*X*/225, /*Y*/0, 2, 337, self.menu.color[self.visibleTeddehMenu[2]], 0.6, 2, "white");
+			self.hud.backgroundLines[2][2] = self createRectangle("CENTER", "CENTER", /*X*/150, /*Y*/-168, 151, 2, self.menu.color[self.visibleTeddehMenu[2]], 0.6, 2, "white");
+			self.hud.backgroundLines[2][3] = self createRectangle("CENTER", "CENTER", /*X*/150, /*Y*/168, 151, 2, self.menu.color[self.visibleTeddehMenu[2]], 0.6, 2, "white");
+			break;
 		
-		string = "";
+		case "V_0.3":
+			break;
 	}
 }
 
+setTeddehMenuText() {
+	switch(self.SELECTED_MENU) {
+		case "V_0.2":
+			string = "";
+			for(a = 0; a < self.visibleTeddehMenu.size; a+=1) {
+				self.correctVal = self.visibleTeddehMenu[a];
+				self.scale = 0;
+				self.posX = 0;
+				self.posY = 0;
+				self.textY = 0;
+				if(a == 1) {
+					self.scale = 1.6;
+					self.posX = 0;
+					self.posY = 60;
+					self.textY = self.posY - 50;
+				}
+				if(a == 0 || a == 2) {
+					if(a == 0) self.posX = -150;
+					if(a == 2) self.posX = 150;
+					self.scale = 1.2;
+					self.posY = 90;
+					self.textY = self.posY - 30;
+				}
+				
+				self.menu.title[a] destroy();
+				self.menu.title[a] = self drawText(self.menu.text[self.correctVal], "default", self.scale + 0.3, /*X*/self.posX, /*Y*/self.textY, self.menu.color[self.correctVal], 1, (0, 0.58, 1), 1, 3);
+				self.menu.title[a] FadeOverTime(0.3);
+				self.menu.title[a].alpha = 1;
+				self.menu.title[a].glowAlpha = 1;
+				self.menu.title[a].x = self.posX;
+				self.menu.title[a].y = self.textY;
+				self.hud.text[a].fontScale = self.scale;
+				if(a == 1) self.hud.text[a].glowColor = ((68/255), (143/255), (255/255));
+				if(a == 0 || a == 2) self.hud.text[a].glowColor = ((244/255), (110/255), (66/255));
+				if(a == 1) {
+					self.menu.title[a+3] destroy();
+					self.menu.title[a+3] = self drawText("Created By TeddyDev", "default", 1, /*X*/self.posX, /*Y*/self.textY + 15, self.menu.color[self.correctVal], 1, (0, 0.58, 1), 1, 3);
+					self.menu.title[a+3] FadeOverTime(0.3);
+					self.menu.title[a+3].alpha = 1;
+					self.menu.title[a+3].glowAlpha = 1;
+					self.menu.title[a+3].x = self.posX;
+					self.menu.title[a+3].y = self.textY + 15;
+					self.hud.text[a+3].fontScale = self.scale;
+					self.hud.text[a+3].glowColor = ((68/255), (143/255), (255/255));
+				}
+			
+				for(b = 0; b < self.menu.optText[self.correctVal].size; b+=1) {
+					string += self.menu.optText[self.correctVal][b] + "\n";
+				}
+				self.hud.text[a] destroy();
+				self.hud.text[a] = self drawText(string, "objective", self.scale, self.posX, self.posY, (1, 1, 1), 0, self.menu.color[self.correctVal], 1, 4);
+				self.hud.text[a] FadeOverTime(0.3);
+				self.hud.text[a].alpha = 1;
+				self.hud.text[a].x = self.posX;
+				self.hud.text[a].y = self.posY;
+				self.hud.text[a].fontScale = self.scale;
+				
+				string = "";
+			}
+			break;
+			
+		case "V_0.3":
+			wait 0.5;
+			self.menu.title[0] = self drawText(level.PROJECT_NAME + " v0.3", "objective", 2, /*X*/self.hud.background[0].x, /*Y*/self.hud.background[0].y, (1, 1, 1), 0.9, (0, 0.58, 1), 0, 2);
+			self.menu.title[0] setPoint("CENTER", "CENTER", /*X*/self.hud.background[0].x, /*Y*/self.hud.background[0].y);
+			
+			//Categories
+			self.menu.title[2] = self drawText("TRAINER", "objective", 1, /*X*/self.hud.background[1].x, /*Y*/self.hud.background[1].y, ((200/255), (200/255), (200/255)), 0.8, (0, 0.58, 1), 0, 2);
+			self.menu.title[2] setPoint("CENTER", "CENTER", /*X*/self.hud.background[1].x, /*Y*/self.hud.background[1].y);
+			for(a = 0; a < (self.menu.text.size - 1); a++) {
+				self.hud.text[a] destroy();
+				self.hud.text[a] = self drawText("LEFT", "CENTER", self.menu.text[a], "objective", 1, self.hud.background[2].x - 60, (self.hud.background[2].y - 115) + (a * 15), (1, 1, 1), 0.9, (0, 0, 0), 0, 4);
+			}
+			
+			//Players
+			self.menu.title[3] = self drawText("PLAYERS", "objective", 1, /*X*/self.hud.background[3].x, /*Y*/self.hud.background[3].y, ((200/255), (200/255), (200/255)), 0.8, (0, 0.58, 1), 0, 2);
+			self.menu.title[3] setPoint("CENTER", "CENTER", /*X*/self.hud.background[3].x, /*Y*/self.hud.background[3].y);
+			for(a = 0; a < level.players.size; a++) {
+				self iprintln("" + self.menu.optText[self.menu.text.size][a]);
+				self.hud.text[self.menu.text.size + a] destroy();
+				self.hud.text[self.menu.text.size + a] = self drawText("LEFT", "CENTER", self.menu.optText[self.menu.text.size][a], "objective", 1, self.hud.background[4].x - 60, (self.hud.background[4].y - 30) + (a * 15), (1, 1, 1), 0.9, (0, 0, 0), 0, 4);
+			}
+			break;
+	}
+}
+
+/* TODO: MOVE ME */
 toggleTeddehMenuAdvertisment() {
 	if(isDefined(self.menuAd) || self.menuAd == 0) {
 		self.menuAd = 1;
@@ -379,7 +502,9 @@ teddehMenuAdvertisment() {
 
 removeTeddehMenuAdvertisment() {
 	for(i = 0; i < 5; i++) self.hud.menuAd[i] destroy();
+	self.hud.menuAdText destroy();
 }
+
 
 
 
